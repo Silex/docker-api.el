@@ -58,7 +58,7 @@
 (defvar docker-connection--http-data nil
   "fixme")
 
-(defvar docker-connection--request-finised nil
+(defvar docker-connection--request-finished nil
   "fixme")
 
 (defun docker-connection-process-filter(process string)
