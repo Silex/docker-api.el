@@ -32,6 +32,6 @@
 (defun docker-api-network-remove (id)
   (docker-api-json-request 'delete (format "/networks/%s" id)))
 
-(provide 'docker-networks)
+(provide 'docker-api-networks)
 
 ;;; docker-networks.el ends here
