@@ -32,6 +32,6 @@
 (defun docker-api-volume-remove (id)
   (docker-api-json-request 'delete (format "/volumes/%s" id)))
 
-(provide 'docker-volumes)
+(provide 'docker-api-volumes)
 
 ;;; docker-volumes.el ends here
