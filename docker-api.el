@@ -27,7 +27,7 @@
 ;;; Code:
 
 (defgroup docker-api nil
-  "Customization group for docker's connection."
+  "Customization group for docker-api."
   :group 'docker
   :group 'convenience)
 
