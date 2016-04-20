@@ -1,7 +1,6 @@
 ;;; docker-api-connection.el --- Emacs interface to the Docker API
 
 ;; Author: Philippe Vaucher <philippe.vaucher@gmail.com>
-;; URL: https://github.com/Silex/docker-api.el
 
 ;; This file is NOT part of GNU Emacs.
 
