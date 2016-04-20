@@ -27,7 +27,7 @@
 (require 'dash)
 (require 'json)
 
-(defcustom docker-api-host-url "unix:///var/run/docker.sock"
+(defcustom docker-api-connection-url "unix:///var/run/docker.sock"
   "Docker connection url."
   :group 'docker-api)
 
@@ -65,7 +65,7 @@
 (defun docker-api-connection-process ()
   "Get or create the docker connection process."
   (or (get-buffer-process docker-api-connection-process-buffer)
-      (-let [(family host service) (docker-api-connection-process-components docker-api-host-url)]
+      (-let [(family host service) (docker-api-connection-process-components docker-api-connection-url)]
         (make-network-process
          :name     docker-api-connection-process-name
          :buffer   docker-api-connection-process-buffer
@@ -95,6 +95,13 @@ See `docker-api-http-request'."
   (let ((json (docker-api-http-request method path))
         (json-array-type 'list))
     (json-read-from-string json)))
+
+(defmacro docker-api-with-connection (url &rest body)
+  "Execute BODY with `docker-api-connection-url' set to URL."
+  `(let ((docker-api-connection-url ,url))
+     ,@body))
+
+(put 'docker-api-with-connection 'lisp-indent-function 'defun)
 
 (provide 'docker-api-connection)
 
