@@ -62,27 +62,27 @@
         (list 'local nil (url-filename components))
       (list 'ipv4 (url-host components) (url-port components)))))
 
-(defun docker-api-connection-process ()
-  "Get or create the docker connection process."
-  (or (get-buffer-process docker-api-connection-process-buffer)
-      (-let [(family host service) (docker-api-connection-process-components docker-api-connection-url)]
-        (make-network-process
-         :name     docker-api-connection-process-name
-         :buffer   docker-api-connection-process-buffer
-         :family   family
-         :host     host
-         :service  service
-         :filter   #'docker-api-connection-process-filter
-         :sentinel #'docker-api-connection-process-sentinel))))
+(defun docker-api-make-connection-process ()
+  "Create the docker connection process."
+  (-let [(family host service) (docker-api-connection-process-components docker-api-connection-url)]
+    (make-network-process
+     :name     docker-api-connection-process-name
+     :buffer   docker-api-connection-process-buffer
+     :family   family
+     :host     host
+     :service  service
+     :filter   #'docker-api-connection-process-filter
+     :sentinel #'docker-api-connection-process-sentinel)))
 
 (defun docker-api-http-request (method path)
   "Make a docker HTTP request using METHOD at PATH."
-  (let ((request (format "%s %s HTTP/1.0\r\n\r\n" (upcase (symbol-name method)) path)))
-    (setq docker-api-connection--http-data nil)
-    (setq docker-api-connection--request-finished nil)
-    (process-send-string (docker-api-connection-process) request)
+  (let ((request (format "%s %s HTTP/1.0\r\n\r\n" (upcase (symbol-name method)) path))
+        (docker-api-connection--http-data nil)
+        (docker-api-connection--request-finished nil)
+        (process (docker-api-make-connection-process)))
+    (process-send-string process request)
     (while (not docker-api-connection--request-finished)
-      (accept-process-output (docker-api-connection-process) 3))
+      (accept-process-output process 1))
     (let* ((index (s-index-of "\r\n\r\n" docker-api-connection--http-data))
            (headers (substring docker-api-connection--http-data 0 index))
            (data (substring docker-api-connection--http-data (+ index 4))))
