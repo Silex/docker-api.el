@@ -2,30 +2,28 @@
 
 Emacs interface to the [Docker Remote API](https://docs.docker.com/engine/reference/api/docker_remote_api).
 
-## Images
+## Examples
 
-### docker-api-images (&optional all digests)
+### List images
 
-Returns the images list.
+``` emacs-lisp
+(--each (docker-api-images)
+  (message "image: %s size: %d" (car (assoc-default 'RepoTags it)) (assoc-default 'Size it)))
+```
 
-### docker-api-image-remove (id &optional force no-prune)
+### Different DOCKER_HOST
 
-Removes image.
+``` emacs-lisp
+(docker-api-with-connection "http://myhost.com:1234"
+  (docker-api-images))
+```
 
-## Containers
+### TRAMP
 
-### docker-api-containers
-### docker-api-container-remove (id)
-
-## Volumes
-
-### docker-api-volumes
-### docker-api-volume-remove (id)
-
-## Networks
-
-### docker-api-networks
-### docker-api-network-remove (id)
+``` emacs-lisp
+(let ((default-directory "/ssh:user@myhost.com:"))
+  (docker-api-images))
+```
 
 ## Utilities
 
