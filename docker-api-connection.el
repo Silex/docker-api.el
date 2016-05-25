@@ -44,9 +44,9 @@
   "Helper that checks if DATA contains errors for `docker-api-http-request'."
   (let* ((response (plist-get data :response))
          (data (request-response-data response)))
-    (if (request-response-error-thrown response)
-        (error data)
-      (setq http-data data))))
+    (when (request-response-error-thrown response)
+      (error data))
+    data))
 
 (defun docker-api-http-request (method path)
   "Make a docker HTTP request using METHOD at PATH."
@@ -58,7 +58,7 @@
              :type (upcase (symbol-name method))
              :parser 'buffer-string
              :sync t
-             :complete #'docker-api-handle-response)
+             :complete (lambda (&rest data) (setq http-data (apply #'docker-api-handle-response data))))
     http-data))
 
 (defun docker-api-json-request (method path)
